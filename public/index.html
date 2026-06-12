@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lightpanda Browser</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="toolbar">
+    <button id="back" class="nav" title="Back">&#8249;</button>
+    <button id="forward" class="nav" title="Forward">&#8250;</button>
+    <button id="reload" class="nav" title="Reload">&#8635;</button>
+    <form id="bar" class="bar">
+      <input id="url" type="text" placeholder="Enter a website address, e.g. example.com" autocomplete="off" />
+    </form>
+    <span id="engine" class="engine">idle</span>
+  </header>
+  <div id="status" class="status"></div>
+  <main class="stage">
+    <section id="welcome" class="welcome">
+      <h1>🐼 Lightpanda Browser</h1>
+      <p>Type a URL above and press Enter. Rendered by the Lightpanda headless engine.</p>
+      <p class="hint">Try one of these:</p>
+      <div class="shortcuts">
+        <button data-url="example.com">example.com</button>
+        <button data-url="news.ycombinator.com">news.ycombinator.com</button>
+        <button data-url="en.wikipedia.org/wiki/Web_browser">Wikipedia: Web browser</button>
+        <button data-url="lightpanda.io">lightpanda.io</button>
+      </div>
+      <p class="note">Note: this is a text/page browser. Audio and video won't play.</p>
+    </section>
+    <iframe id="view" class="view" sandbox="allow-scripts allow-forms allow-popups allow-same-origin" hidden></iframe>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
