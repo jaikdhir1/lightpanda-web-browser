@@ -1,9 +1,12 @@
 services:
   lightpanda:
     image: lightpanda/browser:nightly
-    command: serve --host 0.0.0.0 --port 9222
+    # The image needs the binary name in the command (per Lightpanda docs):
+    command: lightpanda serve --host 0.0.0.0 --port 9222
     expose:
       - "9222"
+    restart: unless-stopped
+
   web:
     build: .
     ports:
@@ -13,3 +16,4 @@ services:
       - PORT=3000
     depends_on:
       - lightpanda
+    restart: unless-stopped
