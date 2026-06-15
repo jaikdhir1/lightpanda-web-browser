@@ -1,25 +1,67 @@
 # Lightpanda Web Browser
 
-A browser-in-a-browser web app. Type a URL and view the rendered page, powered by the
-[Lightpanda](https://lightpanda.io) headless browser engine.
+A browse-the-web-from-a-container project, with **two modes**. Pick based on what you need.
 
-## Note
-This is a page/text browser. Lightpanda has no audio or video playback, so media-heavy
-sites (YouTube, music, video) will not play sound. Best for articles, docs, and text.
+---
 
-## Run in the cloud (no terminal)
-1. Push these files to a GitHub repo.
-2. Click Code > Codespaces > Create codespace on main.
-3. Wait for the build, then open the forwarded port 3000.
+## 🚀 Mode 1 (recommended) - Full real Chrome, with sound + video
 
-## Run locally (Docker Desktop)
-- Windows: double-click start-windows.bat
-- Mac: double-click start-mac.command
-- Then open http://localhost:3000
+This runs an actual Google Chrome inside a container and streams the whole thing
+(picture, **audio**, **video**, mouse + keyboard) to your browser over WebRTC,
+powered by [neko](https://github.com/m1k1o/neko).
 
-## How it works
-- docker-compose runs two services: the Lightpanda engine (CDP server on :9222) and a
-  Node/Express web server (:3000).
-- The server connects to Lightpanda via puppeteer-core, loads the requested URL, grabs the
-  rendered HTML, and returns it to the UI, which displays it in a sandboxed iframe.
-- If Lightpanda cannot render a page, the server falls back to a direct fetch.
+**This is the fix for Lightpanda's limits** - heavy JS apps (Gmail, YouTube, web
+apps) work normally, and you get real sound and video.
+
+### Where to run it
+WebRTC needs directly reachable ports, so run it on either:
+- **Your own computer with [Docker Desktop](https://www.docker.com/products/docker-desktop/)** (easiest), or
+- **A VPS / cloud server with a public IP.**
+
+> ⚠️ It will **not** stream through GitHub Codespaces - Codespaces only proxies
+> HTTPS, and WebRTC video can't pass through it. Use Docker Desktop or a VPS for this mode.
+
+### Launch on your own computer (no terminal needed)
+1. Install **Docker Desktop** and open it (wait until it says "running").
+2. Download this repo (green **Code** button -> **Download ZIP**) and unzip it.
+3. Double-click:
+   - **Mac:** `start-mac.command` (first time: right-click -> Open to get past the security prompt; if it won't run, open Terminal once and run `chmod +x start-mac.command`).
+   - **Windows:** `start-windows.bat`
+4. Your browser opens `http://localhost:8080`. Log in:
+   - username `neko` / password `neko` (normal), or `admin` / `admin` (admin).
+5. Use the Chrome window like a normal browser - YouTube, audio, video, everything.
+
+To stop it: `docker compose -f docker-compose.neko.yml down`
+
+### Launch on a VPS
+1. Install Docker + Docker Compose on the server.
+2. Edit `docker-compose.neko.yml` and set `NEKO_WEBRTC_NAT1TO1` to the server's public IP.
+3. Run `docker compose -f docker-compose.neko.yml up -d`.
+4. Open `http://<server-ip>:8080` and make sure ports `8080` (TCP) and `52000-52100` (UDP) are open in the firewall.
+
+---
+
+## 🪶 Mode 2 - Lightpanda lite (lightweight, text-first)
+
+The original mode: a tiny Express app that renders pages through the
+[Lightpanda](https://github.com/lightpanda-io/browser) headless engine and shows
+the result in an iframe. **Very light and fast**, runs fine in Codespaces, but by
+design it has **no audio/video** and heavy JS apps only render partially.
+
+### Run in GitHub Codespaces
+- **Code** -> **Codespaces** -> **Create codespace on main**, wait for the build,
+  then open the forwarded port **3000**.
+
+### Run locally
+```
+docker compose up -d
+```
+Then open `http://localhost:3000`.
+
+---
+
+## Which should I pick?
+| You want... | Use |
+|---|---|
+| Sound, video, Gmail/YouTube, a real browser | **Mode 1 (neko)** on Docker Desktop or a VPS |
+| Something super light, or it must run in Codespaces | **Mode 2 (Lightpanda lite)** |

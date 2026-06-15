@@ -1,0 +1,28 @@
+# FULL real-Chrome browser, streamed to your screen with audio + video + input
+# over WebRTC. This is the fix for Lightpanda's limits:
+#   - heavy JS apps (Gmail, YouTube, web apps) work like a normal browser
+#   - you get real SOUND and VIDEO
+#
+# IMPORTANT: run this where ports are directly reachable:
+#   - Docker Desktop on your own computer (easiest, double-click the launcher), or
+#   - a VPS with a public IP.
+# It will NOT stream through GitHub Codespaces (WebRTC can't pass the HTTPS proxy).
+
+services:
+  neko:
+    image: "ghcr.io/m1k1o/neko/google-chrome:latest"
+    restart: "unless-stopped"
+    shm_size: "2gb"
+    ports:
+      - "8080:8080"                     # web UI -> open http://localhost:8080
+      - "52000-52100:52000-52100/udp"   # WebRTC media: audio + video + input
+    environment:
+      NEKO_DESKTOP_SCREEN: "1280x720@30"
+      NEKO_MEMBER_MULTIUSER_USER_PASSWORD: "neko"    # normal-user login password
+      NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD: "admin"  # admin login password
+      NEKO_WEBRTC_EPR: "52000-52100"
+      NEKO_WEBRTC_ICELITE: "1"
+      # Only needed if you open it from ANOTHER device on your network (not the
+      # same machine). Set it to the host computer's LAN IP, e.g. 192.168.1.50.
+      # On a VPS, set it to the server's PUBLIC IP.
+      # NEKO_WEBRTC_NAT1TO1: "192.168.1.50"
